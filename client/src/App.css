@@ -1,0 +1,33 @@
+.App {
+  text-align: center;
+  width: 500px;
+  height: 90vh;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+button {
+  padding: 5px;
+  margin: 10px;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.select-questions {}
+
+.select-category {}
+
+.select-unknown {}
+
+.select-all {}
+
+.flashcard {
+  width: 75%;
+  background: lightblue;
+  margin: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 10vh;
+  min-height: 25vh;
+  font-size: 2.0em;
+}
