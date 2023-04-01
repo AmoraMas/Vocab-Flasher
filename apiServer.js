@@ -138,6 +138,58 @@ app.delete("/api/flashcards/:id", (req, res, next) => {
   );
 });
 
+// Patches a row from flashcards
+app.patch("/api/flashcards/:id", (req, res, next) => {
+  const id = parseInt(req.params.id);
+  // Verify the ID exists
+  const result = pool.query(
+    `SELECT * FROM flashcards WHERE id = $1;`,
+    [id],
+    (readError, deletedData) => {
+      if (readError) {
+        return next({ status: 500, message: readError });
+      } else if (deletedData.rowCount == 0) {
+        return next({
+          status: 404,
+          message: `Flashcard ${id} does not exist.`,
+        });
+      }
+      // Check if submitted body has good information
+      const request = req.body;
+      let list = ["category", "question", "answer", "attempts"];
+      // Only has expected keys and expected integers are integers
+      for (let key in request) {
+        if (!list.includes(key)) {
+          return next({
+            status: 400,
+            message: "Bad information provided. Key name. " + key,
+          });
+        } else if (key == "attempts" && isNaN(request[key])) {
+          return next({
+            status: 400,
+            message: "Submitted attempts is not a number.",
+          });
+        }
+      }
+      // Perform the update for each key value requested
+      for (let key in request) {
+        let queryText =
+          "UPDATE flashcards SET " + key + "=$1 WHERE id = $2 RETURNING *";
+        const result = pool.query(
+          queryText,
+          [request[key], id],
+          (writeError, data) => {
+            if (writeError) {
+              return next({ status: 500, message: writeError });
+            }
+            res.send(data.rows[0]);
+          }
+        );
+      }
+    }
+  );
+});
+
 //
 // TODO: Add PATCH route
 //
